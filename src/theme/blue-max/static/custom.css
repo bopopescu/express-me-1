@@ -1,0 +1,25 @@
+@charset "utf-8";
+/* Custom CSS Document */
+
+p {text-indent:2em;}
+
+a:link    {color: #366799; text-decoration:none}
+a:visited {color: #366799; text-decoration:none}
+a:hover   {color: #cc3300; text-decoration:none}
+a:active  {color: #cc3300; text-decoration:none}
+a:focus   {color: #cc3300; text-decoration:none}
+
+#site-header {background-color:#3275A8;border-top:solid 2px #999;border-bottom:solid 1px #FFF}
+#site-header h1 {margin:20px 10px 20px 10px;padding:0px}
+
+a.nav {font-weight:bold;display:block;float:left;margin:0px;padding:5px 12px;font-size:1.1em;border-right:1px solid #93b666;}
+a.nav:link, a.nav:visited {background-color:transparent}
+a.nav:hover, a.nav:active, a.nav:focus {background-color:#CAE9A3}
+
+h3.blog-post-title {font-size:14px;padding:6px;margin:0px;font-weight:bold;background-color:#F1F6E2;border-bottom:solid 1px #E3E8D4}
+div.blog-post-info {padding:4px;font-style:italic;color:#666}
+div.blog-post-content {padding:6px}
+
+.widget {clear:both}
+h3.widget-title {font-size:14px;padding:6px;margin:0px;font-weight:bold;background-color:#F1F6E2;border-bottom:solid 1px #E3E8D4}
+.widget-content {padding:6px;margin:0px;}
