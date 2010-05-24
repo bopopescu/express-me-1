@@ -1,0 +1,48 @@
+<!-- begin post_tags.html -->
+<div class="panel box-round">
+  <div class="panel-title" style="display:table; padding:0px">
+    <div class="tr">
+      <div class="td" style="width:3%"><input type="checkbox" id="select_all" name="select_all" /></div>
+      <div class="td" style="width:40%">Name</div>
+      <div class="td" style="width:40%">Nice Name</div>
+      <div class="td" style="width:15%">Posts</div>
+    </div>
+  </div>
+  <div class="panel-content" style="display:table; padding:0px">
+  #set $odd=''
+  #for $tag in $tags
+    #if $odd==''
+    #set $odd='-odd'
+    #else
+    #set $odd=''
+    #end if
+    <div class="tr${odd}">
+      <div class="td" style="width:3%"><input type="checkbox" id="select_all" name="select_all" /></div>
+      <div class="td" style="width:40%">
+        <div style="font-size:1.1em;font-weight:bold"><a href="?app=${app}&action=${action}&id=${tag.key}">${tag.tag_name}</a></div>
+      </div>
+      <div class="td" style="width:40%">${tag.tag_nicename}</div>
+      <div class="td" style="width:15%">${tag.tag_count}</div>
+    </div>
+  #end for
+  #if not $tags
+    <div style="padding:12px; font-size:1.1em">No tags found.</div>
+  #end if
+  </div>
+</div>
+
+<div class="panel box-round">
+  <div class="panel-title">Hot Tags</div>
+  <div class="panel-content">
+    #set $n=len($hot_tags)+10
+    #for $tag in $hot_tags
+      #set $em = `$n//10` + '.' + `$n%10`
+      #set $n=$n-1
+      <span style="margin:3px; font-size:${em}em"><a href="/blog/tag/${tag.key}" target="_blank">${tag.tag_nicename}</a></span>
+    #end for
+    #if not $hot_tags
+      <div style="padding:6px; font-size:1.1em">No tags found.</div>
+    #end if
+  </div>
+</div>
+<!-- end post_tags.html -->

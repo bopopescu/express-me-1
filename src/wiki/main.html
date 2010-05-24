@@ -1,0 +1,122 @@
+<!-- wiki app main template -->
+#if $varExists('edit')
+
+<script type="text/javascript">
+function confirm_wiki_cancel(){
+  if(confirm("Are you sure you want to cancel?")){
+    location.assign("/wiki/page/$url_encode($title)")
+  }
+}
+
+function do_insert(tagOpen, tagClose, sampleText){
+  var txtarea = document.getElementById("wiki_content");
+  var selText, isSample = false;
+  if (document.selection && document.selection.createRange) { // IE/Opera
+    //save window scroll position
+    if (document.documentElement && document.documentElement.scrollTop)
+      var winScroll = document.documentElement.scrollTop;
+    else if (document.body)
+      var winScroll = document.body.scrollTop;
+    //get current selection
+    txtarea.focus();
+    var range = document.selection.createRange();
+    selText = range.text;
+    //insert tags
+    checkSelectedText();
+    range.text = tagOpen + selText + tagClose;
+    //mark sample text as selected
+    if (isSample && range.moveStart) {
+      if (window.opera)
+        tagClose = tagClose.replace(/\n/g,"");
+      range.moveStart('character', - tagClose.length - selText.length);
+      range.moveEnd('character', - tagClose.length);
+    }
+    range.select();
+    //restore window scroll position
+    if (document.documentElement && document.documentElement.scrollTop)
+      document.documentElement.scrollTop = winScroll
+    else if (document.body)
+      document.body.scrollTop = winScroll;
+  }
+  else if (txtarea.selectionStart || txtarea.selectionStart == "0") { // Mozilla
+    //save textarea scroll position
+    var textScroll = txtarea.scrollTop;
+    //get current selection
+    txtarea.focus();
+    var startPos = txtarea.selectionStart;
+    var endPos = txtarea.selectionEnd;
+    selText = txtarea.value.substring(startPos, endPos);
+    //insert tags
+    checkSelectedText();
+    txtarea.value = txtarea.value.substring(0, startPos)
+        + tagOpen + selText + tagClose
+        + txtarea.value.substring(endPos, txtarea.value.length);
+    //set new selection
+    if (isSample) {
+      txtarea.selectionStart = startPos + tagOpen.length;
+      txtarea.selectionEnd = startPos + tagOpen.length + selText.length;
+    }
+    else {
+      txtarea.selectionStart = startPos + tagOpen.length + selText.length + tagClose.length;
+      txtarea.selectionEnd = txtarea.selectionStart;
+    }
+    //restore textarea scroll position
+    txtarea.scrollTop = textScroll;
+  }
+  function checkSelectedText() {
+    if (!selText) {
+      selText = sampleText;
+      isSample = true;
+    }
+    else if (selText.charAt(selText.length - 1) == " ") { //exclude ending space char
+      selText = selText.substring(0, selText.length - 1);
+      tagClose += " "
+    }
+  }
+}
+</script>
+<div id="app-wiki-page">
+  <div id="app-wiki-title">Edit Page</div>
+  <div id="app-wiki-content">
+    <form name="editwiki" action="/wiki/edit" method="post">
+      <div><input name="title" type="text" maxlength="50" value="${title}" style="width:90%" /></div>
+      <div class="wiki-toolbar">
+        <div class="wiki-toolbar-btn" onclick="do_insert('**', '**', 'bold text')" style="background-image:url(/wiki/static/btn-bold.png)"></div>
+        <div class="wiki-toolbar-btn" onclick="do_insert('__', '__', 'italic text')" style="background-image:url(/wiki/static/btn-italic.png)"></div>
+        <div class="wiki-toolbar-btn" onclick="do_insert('~~', '~~', 'strike text')" style="background-image:url(/wiki/static/btn-strike.png)"></div>
+        <div class="wiki-toolbar-seperator"></div>
+        <div class="wiki-toolbar-btn" onclick="do_insert('  * ', '', 'unordered list')" style="background-image:url(/wiki/static/btn-ul.png)"></div>
+        <div class="wiki-toolbar-btn" onclick="do_insert('  # ', '', 'ordered list')" style="background-image:url(/wiki/static/btn-ol.png)"></div>
+        <div class="wiki-toolbar-seperator"></div>
+        <div class="wiki-toolbar-btn" onclick="do_insert('[[', ']]', 'link title')" style="background-image:url(/wiki/static/btn-link.png)"></div>
+        <div class="wiki-toolbar-btn" onclick="do_insert('[[', ']]', 'http://link title')" style="background-image:url(/wiki/static/btn-link-external.png)"></div>
+        <div class="wiki-toolbar-btn" onclick="do_insert('[[', ']]', 'mailto:address title')" style="background-image:url(/wiki/static/btn-email.png)"></div>
+        <div class="wiki-toolbar-btn" onclick="do_insert('[[', ']]', 'http://link.jpg')" style="background-image:url(/wiki/static/btn-image.png)"></div>
+        <div class="wiki-toolbar-seperator"></div>
+      </div>
+      <div style="clear:both"></div>
+      <div><textarea id="wiki_content" name="content" rows="10" style="width:90%">${content}</textarea></div>
+      <div><input name="submit" type="submit" value="Done" /> <input name="cancel" type="button" value="Cancel" onclick="confirm_wiki_cancel()" /></div>
+    </form>
+  </div>
+</div>
+<div style="clear:both"></div>
+
+#else
+
+<div id="app-wiki-page">
+  <div id="app-wiki-header"><span class="app-wiki-title">${title}</span>
+    #if $editable
+      <span class="app-wiki-edit">[<a href="/wiki/edit?title=$url_encode($title)">edit</a>]</span>
+    #end if
+  </div>
+  #if $content
+    <div id="app-wiki-content">${content}</div>
+  #else
+    <div id="app-wiki-content"><strong>${title}</strong> is not exist. <a href="/wiki/edit?title=$url_encode($title)">Create it now</a>.</div>
+  #end if
+</div>
+
+#end if
+
+<!-- end wiki app main template -->
