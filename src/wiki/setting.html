@@ -1,0 +1,52 @@
+<!-- begin setting.html -->
+
+<div class="panel box-round">
+<form name="setting" action="/manage/" method="post">
+<input type="hidden" name="app" value="${app}" />
+<input type="hidden" name="action" value="${action}" />
+  <div class="panel-title">Settings</div>
+  <div class="panel-content">
+    #if $varExists('message')
+      <div class="notice">${message}</div>
+    #end if
+    <fieldset>
+      <legend>&nbsp;Wiki Settings&nbsp;</legend>
+      <div class="form-field">
+        <div class="form-field-title">Entry Page:</div>
+        <div class="form-field-input"><input name="entry" type="text" id="entry" maxlength="100" style="width:360px" value="${entry}" /></div>
+      </div>
+      <div class="form-field">
+        <div class="form-field-title">Who can edit:</div>
+        <div class="form-field-input">
+        <select name="edit_level" id="edit_level" style="width:360px">
+          <option value="0">Administrator</option>
+          <option value="10">Editor</option>
+          <option value="20">Author</option>
+          <option value="30">Contributor</option>
+          <option value="40">Subscriber</option>
+        </select>
+        </div>
+      </div>
+      <div class="form-field">
+        <div class="form-field-title">Who can approve:</div>
+        <div class="form-field-input">
+        <select name="approve_level" id="approve_level" style="width:360px">
+          <option value="0">Administrator</option>
+          <option value="10">Editor</option>
+          <option value="20">Author</option>
+          <option value="30">Contributor</option>
+          <option value="40">Subscriber</option>
+        </select>
+        </div>
+      </div>
+    </fieldset>
+    <div class="form-field">
+      <div class="form-field-input">
+        <button type="submit" name="submit">Save</button>
+      </div>
+    </div>
+  </div>
+</form>
+</div>
+
+<!-- end setting.html -->

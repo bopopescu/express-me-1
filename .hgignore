@@ -1,0 +1,11 @@
+syntax: regexp
+^.*\.pyc$
+
+syntax: regexp
+^src/autogen$
+
+syntax: regexp
+^\.settings$
+
+syntax: regexp
+^.*/\..*$

@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/SingleFormTemplate.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Forgot your password? - ${site.name}</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/static/css/blueprint/screen.css" type="text/css" media="screen, projection">
+<!--[if lt IE 8]>
+	<link rel="stylesheet" href="/static/css/blueprint/ie.css" type="text/css" media="screen, projection">
+<![endif]-->
+<link rel="stylesheet" href="/manage/static/css/single.css" type="text/css" media="screen, projection">
+<!-- InstanceBeginEditable name="head" -->
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript">
+//#raw
+function show_error(msg) {
+	if (msg===null || msg==='') {
+		$('#error_msg').hide();
+	}
+	else {
+		$('#error_msg').html(msg);
+		$('#error_msg').show();
+	}
+}
+
+function validate_form() {
+	if ($('#email').val()=='') {
+		show_error('Please enter your email');
+		return false;
+	}
+	if ($('#recaptcha_response_field').val()=='') {
+		show_error('Please enter the captcha words');
+		return false;
+	}
+	show_error(null);
+	$('#forgot').hide();
+	$('#loading').show();
+	return true;
+}
+//#end raw
+jQuery(function() {
+	show_error('${error}');
+});
+</script>
+<!-- InstanceEndEditable -->
+</head>
+<body>
+  <div class="container" style="margin:3px auto">
+    <div class="span-18 prepend-3 last" style="margin-bottom:24px">
+      <div class="span-9" style="padding:12px 0px">
+        <a href="http://www.expressme.org/" target="_blank"><img src="/static/image/expressme.gif" width="326" height="60" /></a>
+	  </div>
+	  <div class="span-9 last large" style="text-align:right"><a href="/">${site.name}</a> | <a href="/manage/register">Register</a> | <a href="/manage/signin">Sign In</a></div>
+	</div>
+    <div class="span-12 prepend-6 last">
+      <!-- InstanceBeginEditable name="MainRegion" -->
+      <form name="forgotForm" id="forgotForm" method="post" action="/manage/forgot" onsubmit="return validate_form()">
+        <fieldset>
+          <legend>Forgot your password?</legend>
+          <div id="error_msg" class="error" style="display:none"></div>
+		  <div class="info">If you forgot your password of your Google account, please <a href="https://www.google.com/accounts/recovery" target="_blank">recover your password from Google</a>.</div>
+          <p><label for="email">Enter your email:</label><br/><input id="email" name="email" type="text" value="${email}" maxlength="50" class="text" /></p>
+          <p>
+            <div id="recaptcha_widget">
+              <div id="recaptcha_image" style="border: 1px solid #ccc"></div>
+              <div><a href="javascript:Recaptcha.reload()">Get another CAPTCHA</a></div>
+              <label for="captcha">Enter the words above:</label><br/><input id="recaptcha_response_field" name="recaptcha_response_field" type="text" maxlength="50" class="text" />
+            </div>
+          </p>
+<script type="text/javascript">
+var RecaptchaOptions = {
+  theme : 'custom',
+  custom_theme_widget: 'recaptcha_widget'
+};
+</script>
+<script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k=${recaptcha_public_key}"></script>
+          <p>We will send you email contains instructions of how to reset your password.</p>
+          <p><input id="forgot" type="submit" value="Next" /><span id="loading" class="loading">Processing, please wait...</span></p>
+        </fieldset>
+      </form>
+	  <!-- InstanceEndEditable -->
+	</div>
+    <div class="span-16 prepend-4 last" style="margin:5px 0px"><hr/></div>
+    <div class="span-14 prepend-5 last">
+	  <div class="span-9" style="line-height:30px; text-align:center"><a href="http://www.expressme.org/" target="_blank">ExpressMe</a> version ${version}, copyright&copy;2010.</div>
+	  <div class="span-4 last"><a href="http://code.google.com/appengine/" target="_blank"><img src="http://code.google.com/appengine/images/appengine-silver-120x30.gif" 
+alt="Powered by Google App Engine" width="120" height="30" align="absmiddle"/></a></div>
+	</div>
+  </div>
+</body>
+<!-- InstanceEnd --></html>

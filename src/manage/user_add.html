@@ -1,0 +1,85 @@
+<!-- begin user_add.html -->
+
+#raw
+<script type="text/javascript" src="/static/js/utils/md5.js"></script>
+<script type="text/javascript" src="/static/js/utils/str.js"></script>
+<script type="text/javascript">
+function show_error(msg) {
+    $("#err_msg").html(msg);
+    $("#err_msg").show();
+}
+function validate_form(){
+    email = $("#email").val();
+    if (!is_email(email.trim())) {
+        show_error("Please enter a valid email address.");
+        return false;
+    }
+    nicename = $("#nicename").val();
+    if (is_blank(nicename)) {
+        show_error("Please enter your nice name.");
+        return false;
+    }
+    var p1 = $("#password1").val();
+    var p2 = $("#password2").val();
+    if (p1.length<6) {
+        show_error("The password should be at least 6 characters long.");
+        return false;
+    }
+    if (p1!=p2) {
+        show_error("Please enter the same password in the two password fields.");
+        return false;
+    }
+    $("#passwd").val(MD5(p1));
+    return true;
+}
+</script>
+#end raw
+
+<div class="panel box-round">
+<form name="useradd" action="/manage/" method="post" onsubmit="return validate_form()">
+<input type="hidden" name="app" value="${app}" />
+<input type="hidden" name="action" value="${action}" />
+<input type="hidden" name="passwd" id="passwd" />
+  <div class="panel-title">Add a New User</div>
+  <div class="panel-content">
+    <div class="notice">Users can <a href="/manage/register" target="_blank">register themselves</a> or you can manually create users here.</div>
+    <div id="err_msg" class="error" style="display:none"></div>
+    <div class="form-field">
+      <div class="form-field-title">Email <em>(required)</em>:</div>
+      <div class="form-field-input"><input name="email" type="text" id="email" maxlength="100" style="width:360px" /></div>
+    </div>
+    <div class="form-field">
+      <div class="form-field-title">Nice name <em>(required)</em>:</div>
+      <div class="form-field-input"><input name="nicename" type="text" id="nicename" maxlength="100" style="width:360px" /></div>
+    </div>
+    <div class="form-field">
+      <div class="form-field-title">Password <em>(twice, required)</em>:</div>
+      <div class="form-field-input"><input name="password1" type="password" id="password1" maxlength="20" style="width:360px" /></div>
+      <div class="form-field-input"><input name="password2" type="password" id="password2" maxlength="20" style="width:360px" /></div>
+    </div>
+    <div class="form-field">
+      <div class="form-field-title">Role:</div>
+      <div class="form-field-input">
+        <select name="role" id="role" style="width:360px">
+          <option value="0">Administrator</option>
+          <option value="10">Editor</option>
+          <option value="20">Author</option>
+          <option value="30">Contributor</option>
+          <option value="40">Subscriber</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-field">
+      <div class="form-field-title">Website:</div>
+      <div class="form-field-input"><input name="website" type="text" id="website" maxlength="100" style="width:360px" /></div>
+    </div>
+    <div class="form-field">
+      <div class="form-field-input">
+        <button type="submit" name="submit">Save</button>
+      </div>
+    </div>
+  </div>
+</form>
+</div>
+
+<!-- end user_add.html -->
