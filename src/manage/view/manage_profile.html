@@ -1,0 +1,81 @@
+<!-- begin manage_profile.html -->
+<script type="text/javascript">
+jQuery(function() {
+  jQuery('\#role').val('${user.role}');
+});
+//#raw
+function validate_form(){
+    if (is_blank($('#nicename').val())) {
+        set_error('Please enter your nice name.', true);
+        return false;
+    }
+    var p1 = $('#password1').val();
+    var p2 = $('#password2').val();
+    if (p1!='' && p2!='') {
+        if (p1.length<6) {
+            set_error('The password should be at least 6 characters long.', true);
+            return false;
+        }
+        if (p1!=p2) {
+            set_error('Please enter the same password in the two password fields.', true);
+            return false;
+        }
+        $('#password').val(MD5(p1));
+    }
+	else if (p1==='' && p2==='') {
+        $('#password').val('');
+    }
+	else {
+		set_error('Please enter the same password in the two password fields.', true);
+    	return false;
+	}
+	set_info();
+	set_warning();
+	set_error();
+	$('#save').hide();
+	$('#loading').show();
+    return true;
+}
+//#end raw
+</script>
+<div class="panel box-round">
+  <form name="profile" action="/manage/" method="post" onsubmit="return validate_form()">
+  <input type="hidden" name="app" value="${app}" />
+  <input type="hidden" name="command" value="${command}" />
+  <div class="panel-title"><div>Your Profile</div></div>
+  <div class="panel-content">
+    <div class="form-field">
+      <div class="form-field-title">Role <em>(cannot change)</em>:</div>
+      <div class="form-field-input"><select name="role" id="role" style="width:360px" disabled="disabled">
+        <option value="">Detecting...</option>
+        <option value="0">Administrator</option>
+        <option value="10">Editor</option>
+        <option value="20">Author</option>
+        <option value="30">Contributor</option>
+        <option value="40">Subscriber</option>
+      </select></div>
+    </div>
+    <div class="form-field">
+      <div class="form-field-title">Email <em>(cannot change)</em>:</div>
+      <div class="form-field-input"><input name="email" value="${user.email}" type="text" id="email" style="width:360px" disabled="disabled" /></div>
+    </div>
+    <div class="form-field">
+      <div class="form-field-title">Nice name <em>(required)</em>:</div>
+      <div class="form-field-input"><input name="nicename" value="${user.nicename}" type="text" id="nicename" maxlength="100" style="width:360px" /></div>
+    </div>
+    <div class="form-field">
+      <div class="form-field-title">Change password <em>(leave blank if you do not want to change your password)</em>:</div>
+      <div class="form-field-input"><input name="password1" type="password" id="password1" maxlength="20" style="width:360px" /></div>
+      <div class="form-field-input"><input name="password2" type="password" id="password2" maxlength="20" style="width:360px" /></div>
+    </div>
+    <div class="form-field">
+      <div class="form-field-input">
+      	<input name="password" type="hidden" id="password"/>
+        <button id="save" type="submit" name="submit">Save</button>
+        <span id="loading" class="loading">Saving, please wait...</span>
+      </div>
+    </div>
+  </div>
+</form>
+</div>
+<!-- end manage_profile.html -->

@@ -1,0 +1,16 @@
+<!-- blog app posts -->
+
+<div id="app-blog-posts">
+  #for $post in $posts
+  <div style="clear:both">
+    <h3 class="blog-post-title"><a href="/blog/post/${post.id}">${post.title}</a></h3>
+    <div class="blog-post-info"><a href="/blog/cat/${post.category.id}">${post.category.name}</a>, published at ${utils.format_datetime($post.creation_date)}</div>
+    <div class="blog-post-content">${post.content__raw__}</div>
+  </div>
+  #end for
+  #if not $posts
+  <div>Oh, there is no any post yet!</div>
+  #end if
+</div>
+
+<!-- end blog app posts -->

@@ -1,0 +1,175 @@
+<!-- begin manage_edit_user.html -->
+<script type="text/javascript">
+jQuery(function() {
+    jQuery('\#role').val('${role}');
+    jQuery('\#select_role').val('${role}');
+    jQuery('\#filter').click(function() {
+        location.assign('/manage/?app=${app}&command=${command}&role=' + jQuery('\#select_role').val())
+    });
+});
+//#raw
+var ROLE_NAME = {
+    '0' : 'Administrator',
+	'10' : 'Editor',
+	'20' : 'Author',
+	'30' : 'Contributor',
+	'40' : 'Subscriber'
+}
+$(function() {
+    $('#set_role').change(function() {
+		var role = $('#set_role').val();
+		if (role=='') {
+			return;
+		}
+        var selected_users = $('input.select-user:checked');
+        if (selected_users.length==0) {
+            alert('Please select users first.');
+        }
+        else {
+            var msg = 'Are you sure you want to set this user to ' + ROLE_NAME[role] + '?';
+            if (selected_users.length>1) {
+                msg = 'Are you sure you want to set these users to ' + ROLE_NAME[role] + '?';
+            }
+            if (confirm(msg)) {
+				$('#btn').val('set_role');
+				$('#edit_form').submit();
+			}
+		}
+    });
+    $('#lock').click(function() {
+        var selected_users = $('input.select-user:checked');
+        if (selected_users.length==0) {
+			alert('Please select users first.');
+		}
+		else {
+			var msg = 'Are you sure you want to lock this user?';
+			if (selected_users.length>1) {
+				msg = 'Are you sure you want to lock these users?';
+			}
+			if (confirm(msg)) {
+				$('#btn').val('lock');
+				$('#edit_form').submit();
+			}
+		}
+    });
+    $('#unlock').click(function() {
+        var selected_users = $('input.select-user:checked');
+        if (selected_users.length==0) {
+			alert('Please select users first.');
+		}
+		else {
+			var msg = 'Are you sure you want to unlock this user?';
+			if (selected_users.length>1) {
+				msg = 'Are you sure you want to unlock these users?';
+			}
+			if (confirm(msg)) {
+				$('#btn').val('unlock');
+				$('#edit_form').submit();
+			}
+		}
+    });
+    $('#select_all').change(function() {
+        if ($('#select_all').is(':checked')) {
+            $('.select-user').attr('checked', 'checked');
+            $('.tr-hover').addClass('tr-selected');
+        }
+        else {
+            $('.select-user').removeAttr('checked');
+            $('.tr-hover').removeClass('tr-selected');
+        }
+    });
+    $('.select-user').click(function() {
+        if ($(this).is(':checked')) {
+            $(this).parent().parent().parent().addClass('tr-selected');
+        }
+        else {
+            $(this).parent().parent().parent().removeClass('tr-selected');
+        }
+        if ($('input.select-user:checked').length==$('input.select-user').length) {
+            $('#select_all').attr('checked', 'checked');
+        }
+        else {
+            $('#select_all').removeAttr('checked');
+        }
+	});
+});
+//#end raw
+</script>
+<div class="panel box-round">
+  <div class="panel-title"><div>Registered Users</div></div>
+  <div class="panel-content">
+  <form id="edit_form" action="/manage/" method="post">
+  	<input type="hidden" name="app" value="${app}" />
+  	<input type="hidden" name="command" value="${command}" />
+  	<input type="hidden" name="offset" value="${offset}" />
+  	<input type="hidden" name="index" value="${index}" />
+  	<input type="hidden" id="btn" name="btn" value="" />
+    <div class="th bottom-line">
+      <div class="span-1"><div><input type="checkbox" id="select_all" name="select_all" /></div></div>
+      <div class="span-6"><div>Email</div></div>
+      <div class="span-5"><div>Nice Name</div></div>
+      <div class="span-3"><div>Role</div></div>
+      <div class="span-1"><div><img src="/manage/static/image/locked.png" width="16" height="16" alt="Locked" title="Locked" /></div></div>
+      <div class="span-4 last"><div>Registered</div></div>
+    </div>
+  #if not $users
+    <div class="tr"><div class="span-20 last"><div style="padding: 16px; text-align:center; font-style:italic;">No user found that match the filter.</div></div></div>
+  #end if
+  #for $user in $users
+    <div class="tr tr-hover">
+      <div class="span-1"><div><input type="checkbox" name="u" class="select-user" value="${user.id}" /></div></div>
+      <div class="span-6">
+      	<div style="font-size:1.1em;font-weight:bold"><a href="?app=${app}&command=send_mail&id=${user.id}">${user.email}</a></div>
+      </div>
+      <div class="span-5"><div>${user.nicename}</div></div>
+      <div class="span-3"><div>${user.get_role_name()}</div></div>
+      <div class="span-1"><div>
+      #if $user.locked
+        <img src="/manage/static/image/locked.png" width="16" height="16" alt="Locked" title="Locked" />
+      #end if
+      </div></div>
+      <div class="span-4 last"><div>$utils.format_datetime($user.creation_date)</div></div>
+    </div>
+  #end for
+  	<div class="tr top-line">
+      <div class="span-12">
+        <div>
+          <input type="hidden" id="role" name="role" value="${role}" />
+          <select name="select_role" id="select_role">
+            <option value="">All</option>
+            <option value="0">Administrator</option>
+            <option value="10">Editor</option>
+            <option value="20">Author</option>
+            <option value="30">Contributor</option>
+            <option value="40">Subscriber</option>
+          </select>
+          <button type="button" name="filter" id="filter">Filter</button>
+          <button type="button" name="lock" id="lock">Lock</button>
+          <button type="button" name="unlock" id="unlock">Unlock</button>
+          <select name="set_role" id="set_role">
+            <option value="">- Set to new role -</option>
+            <option value="0">Set to Administrator</option>
+            <option value="10">Set to Editor</option>
+            <option value="20">Set to Author</option>
+            <option value="30">Set to Contributor</option>
+            <option value="40">Set to Subscriber</option>
+          </select>
+        </div>
+      </div>
+      <div class="span-7" style="text-align:right">
+        <div>
+          #if $index>1
+            <a href="/manage/?app=${app}&command=${command}&role=${role}">First Page</a> |
+          #end if
+          Page ${index}
+          #if $next
+            | <a href="/manage/?app=${app}&command=${command}&index=${index+1}&role=${role}&offset=${next}">Next Page »</a>
+          #end if
+        </div>
+      </div>
+      <div class="span-1 last"></div>
+  	</div>
+  </div>
+  </form>
+</div>
+<!-- end manage_edit_user.html -->

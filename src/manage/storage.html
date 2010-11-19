@@ -1,0 +1,117 @@
+<!-- begin storage.html -->
+
+#raw
+<script type="text/javascript">
+function select_photo_provider() {
+  select_id = $("#photo_provider").val();
+  $("#" + select_id.replace(/\./g, "_")).show();
+}
+</script>
+#end raw
+
+<div class="panel box-round">
+<form name="setting" action="/manage/" method="post">
+<input type="hidden" name="app" value="${app}" />
+<input type="hidden" name="action" value="${action}" />
+  <div class="panel-title">Storage</div>
+  <div class="panel-content">
+    #if $varExists('message')
+      <div class="notice">${message}</div>
+    #end if
+    <div id="warning" class="error" style="display:none"></div>
+    <fieldset>
+      <legend>&nbsp;Photo Storage&nbsp;</legend>
+      <div class="form-field">
+        <div class="form-field-title">Photo Storage Service:</div>
+        <div class="form-field-input">
+          <select name="photo_provider" id="photo_provider" onchange="select_photo_provider()">
+            <option value="">- None -</option>
+            #for $p in $photo_providers
+            <option value="${p.__module__}.${p.__name__}">${p.name}</option>
+            #end for
+          </select>
+        </div>
+      </div>
+      #for $p in $photo_providers
+        #set $full = $p.__module__ + '.' + $p.__name__
+        <div id="${full.replace('.', '_')}" style="display:none">
+          #for $s in $p.settings
+          <div class="form-field">
+            <div class="form-field-title">
+              ${s.name}
+              #if $s.required
+                <i>(required)</i>
+              #else
+                <i>(optional)</i>
+              #end if
+            </div>
+            <div class="form-field-input">
+              <input name="${p.__module__.replace('.', '_')}_${s.key}"
+              #if $s.is_password
+                type="password"
+              #else
+                type="text"
+              #end if
+              maxlength="50" style="width:50%" value="$get_provider_setting($p, $s.key)" /></div>
+          </div>
+          #end for
+        </div>
+      #end for
+      <div class="form-field">
+        <div class="form-field-title">Use Proxy:</div>
+        <div class="form-field-input"><input name="photo_proxied" type="checkbox" id="photo_proxied" value="True"
+          #if $photo_proxied=='True'
+            checked="checked"
+          #end if
+        /><label for="photo_proxied">Proxied as local image</label></div>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>&nbsp;File Storage&nbsp;</legend>
+      <div class="form-field">
+        <div class="form-field-title">File Storage Service:</div>
+        <div class="form-field-input">
+          <select name="file_provider" id="file_provider">
+            <option value="">None</option>
+            <!--
+            <option value="storage.file.google.docs">Google Docs</option>
+            <option value="storage.file.microsoft.skydrive">Microsoft SkyDrive</option>
+            -->
+          </select>
+        </div>
+      </div>
+      <div class="form-field">
+        <div class="form-field-title">Use Proxy:</div>
+        <div class="form-field-input"><input name="file_proxied" type="checkbox" id="file_proxied" value="True"
+          #if $file_proxied=='True'
+            checked="checked"
+          #end if
+        /><label for="file_proxied">Proxied as local file</label></div>
+      </div>
+    </fieldset>
+    <div class="form-field">
+      <div class="form-field-input">
+        <button type="submit" name="submit">Save</button>
+      </div>
+    </div>
+  </div>
+</form>
+</div>
+<script type="text/javascript">
+  jQuery("#photo_provider").val("${photo_provider}");
+  jQuery("#photo_provider").trigger("change");
+  jQuery("#file_provider").val("${file_provider}");
+  jQuery("#file_provider").trigger("change");
+  var s = ""
+#if $photo_provider==''
+  s = s + "<br/>Your photo provider is not configured, and photo uploading is disabled."
+#end if
+#if $file_provider==''
+  s = s + "<br/>Your file provider is not configured, and file uploading is disabled."
+#end if
+  if (s!="") {
+    jQuery("#warning").html(s.substring(5)).show();
+  }
+</script>
+
+<!-- end setting.html -->

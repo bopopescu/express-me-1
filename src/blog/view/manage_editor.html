@@ -1,0 +1,169 @@
+<!-- begin manage_editor.html -->
+<script type="text/javascript">
+var g_app='${app}';
+var g_command='${command}';
+jQuery(function() {
+	//#if not $post.static
+	jQuery('\#category').val('${post.category.id}');
+	//#end if
+});
+
+//#raw
+function func_success(result) {
+    if (result.error) {
+        $('#save').removeAttr('disabled');
+        $('#loading').hide();
+        set_error(result.error, true);
+    }
+    else {
+		n = result.static ? 'page' : 'post';
+		msg = 'Your ' + n + ' "<strong>' + result.title + '</strong>" has been published successfully!';
+		if (result.state==1) {
+			msg = 'Your ' + n + ' "<strong>' + result.title + '</strong>" has been saved and pending for approval.';
+		}
+		else if (result.state==2) {
+			msg = 'Your ' + n + ' "<strong>' + result.title + '</strong>" has been saved as draft.';
+		}
+		$('#message_title').html(result.title);
+		$('#message_content').html(msg);
+		$('#message').show();
+		$('#editor').hide();
+		$('#add_another').click(function() {
+            location.assign('/manage/?app=' + g_app + '&command=' + g_command);
+		});
+		if (result.state==0) {
+			$('#preview').show().click(function() {
+				window.open(result.url);
+			});
+		}
+    }
+}
+
+function validate_form() {
+	if ($.trim($('#title').val())=='') {
+		set_error('Please enter the title.', true);
+		return false;
+	}
+    if ($('#category').length && $('#category').val()=='') {
+		set_error('Please select a category.', true);
+		return false;
+	}
+	var content = FCKeditorAPI.GetInstance('fckeditor').GetHTML();
+	if ($.trim(content)=='') {
+		set_error('Please enter the content.', true);
+		return false;
+	}
+	set_error();
+    $('#save').attr('disabled', 'disabled');
+    $('#loading').show();
+	var data = encodeURIComponent(content);
+	$('#fckeditor').val('');
+    $.post('/manage/', $('#edit_form').serialize() + '&content=' + data, func_success, 'json');
+    return false;
+//#end raw
+}
+</script>
+<div id="message" class="panel box-round" style="display:none">
+  <div class="panel-title"><div id="message_title"></div></div>
+  <div class="panel-content">
+    <div class="span-18 prepend-1 last">
+      <div id="message_content" style="padding:12px; font-size:1.2em"></div>
+      <div id="message_button" style="padding:12px 12px 12px 40px;">
+	    <button id="add_another" name="add_another" type="button" class="normal">Add Another</button>
+	    <span>&nbsp;&nbsp;&nbsp;</span>
+		<button id="preview" name="preview" type="button" class="normal" style="display:none">View</button>
+	  </div>
+    </div>
+  </div>
+</div>
+
+<div id="editor" class="panel box-round">
+<form id="edit_form" name="edit_form" action="/manage/" method="post" onsubmit="return validate_form()">
+  <input type="hidden" name="app" value="${app}" />
+  <input type="hidden" name="command" value="${command}" />
+  <input type="hidden" name="id" value="${post.id}" />
+  <input type="hidden" name="btn" value="edit" />
+  <div class="panel-title">
+    <div>
+    #if $post.static
+      #if $post.id
+        Edit Page
+      #else
+        Add New Page
+      #end if
+    #else
+      #if $post.id
+        Edit Post
+      #else
+        Add New Post
+      #end if
+    #end if
+    </div>
+  </div>
+  <div class="panel-content">
+    <div class="form-field">
+      <div class="form-field-title">
+        #if $post.static
+          Title of the page:
+        #else
+          Title of the post:
+        #end if
+      </div>
+      <div class="form-field-input"><input name="title" type="text" id="title" maxlength="100" style="width:100%" value="${post.title}" /></div>
+    </div>
+    #if not $post.static
+    <div class="form-field">
+      <div class="form-field-title">Category:</div>
+      <div class="form-field-input">
+        <select name="category" id="category" style="width:100%">
+          <option value="">- Select category -</option>
+        #for $cat in $categories
+          <option value="${cat.key}">${cat.name}</option>
+        #end for
+        </select>
+      </div>
+    </div>
+    #end if
+    <script type="text/javascript" src="/static/js/fckeditor/fckeditor.js"></script>
+    <div class="form-field">
+      <div class="form-field-title">Content:</div>
+      <div class="form-field-input"><textarea name="pcontent" id="fckeditor" style="width:100%">${post.content__raw__}</textarea></div>
+    </div>
+    <script type="text/javascript">
+      var oFCKeditor = new FCKeditor('fckeditor','100%','480');
+      oFCKeditor.BasePath = '/static/js/fckeditor/';
+      oFCKeditor.Config["CustomConfigurationsPath"] = '/blog/static/js/fckconfig.js';
+      oFCKeditor.ReplaceTextarea();
+    </script>
+    #if not $post.static
+    <div class="form-field">
+      <div class="form-field-title">Tags: (seperated by ',')</div>
+      <div class="form-field-input"><input name="tags" type="text" id="tags" maxlength="100" style="width:100%" value="${post.tags_as_string()}" placeholder="Tags are seperated by ','" /></div>
+    </div>
+    #end if
+    <div class="form-field">
+      <div class="form-field-title">Save as draft: (Will not visible to public)</div>
+      <div class="form-field-input"><label><input name="draft" type="checkbox" value="True"
+      #if $post.state==2
+        checked="checked"
+      #end if
+      />Save as draft</label></div>
+    </div>
+    <div class="form-field">
+      <div class="form-field-title">Allow comments:</div>
+      <div class="form-field-input"><label><input name="allow_comment" type="checkbox" value="True"
+      #if $post.allow_comment
+        checked="checked"
+      #end if
+      />Allow comments</label></div>
+    </div>
+    <div class="form-field">
+      <div class="form-field-input">
+        <button type="submit" id="save" name="save" class="normal">Save</button>
+        <span id="loading" class="loading">Saving... please wait...</span>
+      </div>
+    </div>
+  </div>
+</form>
+</div>
+<!-- end manage_editor.html -->

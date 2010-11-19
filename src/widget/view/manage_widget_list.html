@@ -1,0 +1,48 @@
+<!-- begin manage_widget_list.html -->
+<script type="text/javascript">
+var g_app = '${app}';
+var g_command = '${command}';
+//#raw
+$(function() {
+});
+//#end raw
+</script>
+<div class="panel box-round">
+  <div class="panel-title"><div>All Widgets</div></div>
+  <div class="panel-content">
+  <form id="edit_form" action="/manage/" method="post">
+  	<input type="hidden" name="app" value="${app}" />
+  	<input type="hidden" name="command" value="${command}" />
+  	<input type="hidden" id="btn" name="btn" value="" />
+  	<input type="hidden" id="pid" name="id" value="" />
+    <div class="th bottom-line">
+      <div class="span-1"><div></div></div>
+      <div class="span-9"><div>Title</div></div>
+      <div class="span-4"><div>Author</div></div>
+      <div class="span-6 last"><div>URL</div></div>
+    </div>
+  #if not $widgets
+    <div class="tr"><div class="span-20 last"><div style="padding: 16px; text-align:center; font-style:italic;">No widget installed.</div></div></div>
+  #end if
+  #for $w in $widgets
+    <div class="tr tr-hover">
+      <div class="span-1"><div><img src="/widget/installed/${w.id}/static/icon.png" width="32" height="32" /></div></div>
+      <div class="span-9">
+      	<div style="font-weight:bold">
+          <a href="${w.url}" target="_blank">${w.title}</a>
+        </div>
+        <div>${w.description}</div>
+      </div>
+      <div class="span-4"><div>${w.author}</div></div>
+      <div class="span-6 last"><div><a href="${w.url}" target="_blank">${w.url}</a></div></div>
+    </div>
+  #end for
+  	<div class="tr top-line">
+      <div class="span-19 last">
+        <div>Visit ExpressMe official web site to <a href="http://www.expressme.org/blog/c/widgets" target="_blank">get more widgets</a>.</div>
+      </div>
+  	</div>
+  </div>
+  </form>
+</div>
+<!-- end manage_widget_list.html -->
